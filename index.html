@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumen — Late Night Listening</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0a08;
+    --bg-elev: #161210;
+    --bg-card: #1c1714;
+    --ink: #f5ede0;
+    --ink-dim: #a89683;
+    --ink-faint: #6b5d4f;
+    --accent: #e8b04a;
+    --accent-hot: #ff6b3d;
+    --line: #2a221d;
+    --serif: 'Fraunces', Georgia, serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-weight: 400;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body {
+    background-image:
+      radial-gradient(ellipse at 15% 0%, rgba(232, 176, 74, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 100%, rgba(255, 107, 61, 0.06) 0%, transparent 50%);
+    padding-bottom: 120px;
+  }
+
+  /* —— NAV —— */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 48px;
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    background: rgba(13, 10, 8, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 50;
+  }
+
+  .logo {
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    font-style: italic;
+  }
+  .logo::before {
+    content: "◐";
+    color: var(--accent);
+    margin-right: 8px;
+    font-style: normal;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--ink-dim);
+    text-decoration: none;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--ink); }
+  .nav-links a.active { border-bottom: 1px solid var(--accent); padding-bottom: 4px; }
+
+  .nav-user {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-hot));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg);
+    font-weight: 800;
+    font-family: var(--serif);
+  }
+
+  /* —— HERO —— */
+  .hero {
+    padding: 80px 48px 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .hero-meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+    text-align: right;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    line-height: 1.8;
+  }
+
+  /* —— SECTION HEADERS —— */
+  .section {
+    padding: 64px 48px 24px;
+  }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 36px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 18px;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-style: italic;
+    font-size: 32px;
+    letter-spacing: -0.01em;
+  }
+  .section-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+
+  /* —— FEATURED GRID —— */
+  .featured {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 28px;
+  }
+  .featured-card {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  .featured-card:hover { transform: translateY(-4px); }
+  .featured-art {
+    aspect-ratio: 1;
+    border-radius: 2px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 40px -20px rgba(0,0,0,0.6);
+  }
+  .featured-art::after {
+    content: "▶";
+    position: absolute;
+    inset: 0;
+    background: rgba(13, 10, 8, 0.55);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .featured-card:hover .featured-art::after { opacity: 1; }
+  .featured-title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .featured-artist {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  /* artwork patterns */
+  .art-1 { background: linear-gradient(135deg, #c44536 0%, #2a1810 100%); }
+  .art-2 { background: radial-gradient(circle at 30% 30%, #e8b04a, #6b3410 70%); }
+  .art-3 { background: linear-gradient(45deg, #1a3a4a 0%, #4a7a8a 50%, #c8d8e0 100%); }
+  .art-4 { background: linear-gradient(180deg, #2d1b3d 0%, #8b3a62 100%); }
+  .art-5 { background: linear-gradient(135deg, #3a4a2a 0%, #c8b87a 100%); }
+  .art-6 { background: radial-gradient(ellipse at 70% 70%, #ff6b3d, #2a0a0a 70%); }
+
+  /* —— TRACK LIST —— */
+  .track-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .track-row {
+    display: grid;
+    grid-template-columns: 40px 56px 1fr 1fr 80px 60px;
+    align-items: center;
+    gap: 20px;
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .track-row:hover { background: var(--bg-elev); }
+  .track-row.playing {
+    background: var(--bg-elev);
+  }
+  .track-row.playing .track-num { color: var(--accent); }
+  .track-row.playing .track-title { color: var(--accent); }
+
+  .track-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+    text-align: center;
+  }
+  .track-art {
+    width: 48px;
+    height: 48px;
+    border-radius: 2px;
+  }
+  .track-title {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: -0.005em;
+  }
+  .track-artist {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .track-album {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-dim);
+  }
+  .track-duration {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+    text-align: right;
+  }
+  .track-like {
+    background: none;
+    border: none;
+    color: var(--ink-faint);
+    font-size: 18px;
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+    padding: 6px;
+  }
+  .track-like:hover { color: var(--accent-hot); transform: scale(1.15); }
+  .track-like.liked { color: var(--accent-hot); }
+
+  /* —— PLAYER BAR —— */
+  .player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-elev);
+    border-top: 1px solid var(--line);
+    padding: 18px 48px;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    align-items: center;
+    gap: 32px;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .player-now {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .player-art {
+    width: 52px;
+    height: 52px;
+    border-radius: 2px;
+    background: var(--bg-card);
+    transition: background 0.3s;
+  }
+  .player-info {
+    overflow: hidden;
+  }
+  .player-title {
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .player-artist {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-top: 2px;
+  }
+
+  .player-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .player-buttons {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .player-btn {
+    background: none;
+    border: none;
+    color: var(--ink-dim);
+    font-size: 16px;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .player-btn:hover { color: var(--ink); }
+  .player-btn-play {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    padding-left: 2px;
+  }
+  .player-btn-play:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 520px;
+  }
+  .progress-time {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-faint);
+    min-width: 36px;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 3px;
+    background: var(--line);
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--ink);
+    border-radius: 2px;
+    transition: width 0.2s;
+  }
+
+  .player-extras {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 18px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* —— RESPONSIVE —— */
+  @media (max-width: 768px) {
+    .nav, .hero, .section { padding-left: 20px; padding-right: 20px; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-meta { text-align: left; }
+    .track-row { grid-template-columns: 30px 1fr 60px; gap: 12px; }
+    .track-art, .track-album { display: none; }
+    .player { padding: 12px 16px; grid-template-columns: 1fr auto; }
+    .player-extras { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="main-nav">
+  <div class="logo" id="logo">Lumen</div>
+  <ul class="nav-links">
+    <li><a href="#" class="active" id="nav-discover" data-page="discover">Discover</a></li>
+    <li><a href="#" id="nav-library" data-page="library">Library</a></li>
+    <li><a href="#" id="nav-radio" data-page="radio">Radio</a></li>
+    <li><a href="#" id="nav-search" data-page="search">Search</a></li>
+  </ul>
+  <div class="nav-user">
+    <span>Member · 03</span>
+    <div class="avatar" id="user-avatar">M</div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div>
+    <div class="hero-eyebrow">Tuesday Edition · No. 147</div>
+    <h1>Slow hours,<br><em>long shadows.</em></h1>
+  </div>
+  <div class="hero-meta">
+    Curated 04:00 GMT<br>
+    24 tracks · 1h 38m<br>
+    Mood: nocturnal
+  </div>
+</header>
+
+<section class="section" id="featured-section">
+  <div class="section-header">
+    <h2 class="section-title">Featured collections</h2>
+    <span class="section-count">06 / 24</span>
+  </div>
+  <div class="featured" id="featured-grid">
+    <div class="featured-card" data-album-id="alb-001">
+      <div class="featured-art art-1"></div>
+      <div class="featured-title">Vermillion Drift</div>
+      <div class="featured-artist">Halsea Monroe</div>
+    </div>
+    <div class="featured-card" data-album-id="alb-002">
+      <div class="featured-art art-2"></div>
+      <div class="featured-title">Honey on the Tongue</div>
+      <div class="featured-artist">The Provincial</div>
+    </div>
+    <div class="featured-card" data-album-id="alb-003">
+      <div class="featured-art art-3"></div>
+      <div class="featured-title">North of Static</div>
+      <div class="featured-artist">Cordell Vance</div>
+    </div>
+    <div class="featured-card" data-album-id="alb-004">
+      <div class="featured-art art-4"></div>
+      <div class="featured-title">Plum Theater</div>
+      <div class="featured-artist">Yura Saito Trio</div>
+    </div>
+    <div class="featured-card" data-album-id="alb-005">
+      <div class="featured-art art-5"></div>
+      <div class="featured-title">Sycamore Letters</div>
+      <div class="featured-artist">Beech &amp; Crane</div>
+    </div>
+    <div class="featured-card" data-album-id="alb-006">
+      <div class="featured-art art-6"></div>
+      <div class="featured-title">Ember Forecast</div>
+      <div class="featured-artist">Niamh Costello</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="tracks-section">
+  <div class="section-header">
+    <h2 class="section-title">Tonight's rotation</h2>
+    <span class="section-count">12 tracks</span>
+  </div>
+  <div class="track-list" id="track-list">
+    <div class="track-row" data-track-id="trk-001" data-track-title="Carolina Smoke" data-track-artist="Halsea Monroe" data-art="art-1">
+      <div class="track-num">01</div>
+      <div class="track-art art-1"></div>
+      <div>
+        <div class="track-title">Carolina Smoke</div>
+        <div class="track-artist">Halsea Monroe</div>
+      </div>
+      <div class="track-album">Vermillion Drift</div>
+      <div class="track-duration">4:12</div>
+      <button class="track-like" data-track-id="trk-001" aria-label="Like track">♡</button>
+    </div>
+
+    <div class="track-row" data-track-id="trk-002" data-track-title="Sodium Lamp" data-track-artist="The Provincial" data-art="art-2">
+      <div class="track-num">02</div>
+      <div class="track-art art-2"></div>
+      <div>
+        <div class="track-title">Sodium Lamp</div>
+        <div class="track-artist">The Provincial</div>
+      </div>
+      <div class="track-album">Honey on the Tongue</div>
+      <div class="track-duration">3:48</div>
+      <button class="track-like" data-track-id="trk-002" aria-label="Like track">♡</button>
+    </div>
+
+    <div class="track-row" data-track-id="trk-003" data-track-title="Long Way From Anywhere" data-track-artist="Cordell Vance" data-art="art-3">
+      <div class="track-num">03</div>
+      <div class="track-art art-3"></div>
+      <div>
+        <div class="track-title">Long Way From Anywhere</div>
+        <div class="track-artist">Cordell Vance</div>
+      </div>
+      <div class="track-album">North of Static</div>
+      <div class="track-duration">5:24</div>
+      <button class="track-like" data-track-id="trk-003" aria-label="Like track">♡</button>
+    </div>
+
+    <div class="track-row" data-track-id="trk-004" data-track-title="Curtain in the Window" data-track-artist="Yura Saito Trio" data-art="art-4">
+      <div class="track-num">04</div>
+      <div class="track-art art-4"></div>
+      <div>
+        <div class="track-title">Curtain in the Window</div>
+        <div class="track-artist">Yura Saito Trio</div>
+      </div>
+      <div class="track-album">Plum Theater</div>
+      <div class="track-duration">6:01</div>
+      <button class="track-like" data-track-id="trk-004" aria-label="Like track">♡</button>
+    </div>
+
+    <div class="track-row" data-track-id="trk-005" data-track-title="Field Recording, August" data-track-artist="Beech &amp; Crane" data-art="art-5">
+      <div class="track-num">05</div>
+      <div class="track-art art-5"></div>
+      <div>
+        <div class="track-title">Field Recording, August</div>
+        <div class="track-artist">Beech &amp; Crane</div>
+      </div>
+      <div class="track-album">Sycamore Letters</div>
+      <div class="track-duration">3:33</div>
+      <button class="track-like" data-track-id="trk-005" aria-label="Like track">♡</button>
+    </div>
+
+    <div class="track-row" data-track-id="trk-006" data-track-title="Outskirts" data-track-artist="Niamh Costello" data-art="art-6">
+      <div class="track-num">06</div>
+      <div class="track-art art-6"></div>
+      <div>
+        <div class="track-title">Outskirts</div>
+        <div class="track-artist">Niamh Costello</div>
+      </div>
+      <div class="track-album">Ember Forecast</div>
+      <div class="track-duration">4:47</div>
+      <button class="track-like" data-track-id="trk-006" aria-label="Like track">♡</button>
+    </div>
+
+    <div class="track-row" data-track-id="trk-007" data-track-title="Brass Door, 1962" data-track-artist="Halsea Monroe" data-art="art-1">
+      <div class="track-num">07</div>
+      <div class="track-art art-1"></div>
+      <div>
+        <div class="track-title">Brass Door, 1962</div>
+        <div class="track-artist">Halsea Monroe</div>
+      </div>
+      <div class="track-album">Vermillion Drift</div>
+      <div class="track-duration">3:19</div>
+      <button class="track-like" data-track-id="trk-007" aria-label="Like track">♡</button>
+    </div>
+
+    <div class="track-row" data-track-id="trk-008" data-track-title="Wisteria Hour" data-track-artist="Yura Saito Trio" data-art="art-4">
+      <div class="track-num">08</div>
+      <div class="track-art art-4"></div>
+      <div>
+        <div class="track-title">Wisteria Hour</div>
+        <div class="track-artist">Yura Saito Trio</div>
+      </div>
+      <div class="track-album">Plum Theater</div>
+      <div class="track-duration">5:55</div>
+      <button class="track-like" data-track-id="trk-008" aria-label="Like track">♡</button>
+    </div>
+
+    <div class="track-row" data-track-id="trk-009" data-track-title="Mercury at Noon" data-track-artist="Cordell Vance" data-art="art-3">
+      <div class="track-num">09</div>
+      <div class="track-art art-3"></div>
+      <div>
+        <div class="track-title">Mercury at Noon</div>
+        <div class="track-artist">Cordell Vance</div>
+      </div>
+      <div class="track-album">North of Static</div>
+      <div class="track-duration">4:08</div>
+      <button class="track-like" data-track-id="trk-009" aria-label="Like track">♡</button>
+    </div>
+
+    <div class="track-row" data-track-id="trk-010" data-track-title="Postcard, Lisbon" data-track-artist="The Provincial" data-art="art-2">
+      <div class="track-num">10</div>
+      <div class="track-art art-2"></div>
+      <div>
+        <div class="track-title">Postcard, Lisbon</div>
+        <div class="track-artist">The Provincial</div>
+      </div>
+      <div class="track-album">Honey on the Tongue</div>
+      <div class="track-duration">3:51</div>
+      <button class="track-like" data-track-id="trk-010" aria-label="Like track">♡</button>
+    </div>
+
+    <div class="track-row" data-track-id="trk-011" data-track-title="Slate Roof, Rain" data-track-artist="Beech &amp; Crane" data-art="art-5">
+      <div class="track-num">11</div>
+      <div class="track-art art-5"></div>
+      <div>
+        <div class="track-title">Slate Roof, Rain</div>
+        <div class="track-artist">Beech &amp; Crane</div>
+      </div>
+      <div class="track-album">Sycamore Letters</div>
+      <div class="track-duration">4:30</div>
+      <button class="track-like" data-track-id="trk-011" aria-label="Like track">♡</button>
+    </div>
+
+    <div class="track-row" data-track-id="trk-012" data-track-title="Tinder &amp; Tonic" data-track-artist="Niamh Costello" data-art="art-6">
+      <div class="track-num">12</div>
+      <div class="track-art art-6"></div>
+      <div>
+        <div class="track-title">Tinder &amp; Tonic</div>
+        <div class="track-artist">Niamh Costello</div>
+      </div>
+      <div class="track-album">Ember Forecast</div>
+      <div class="track-duration">3:42</div>
+      <button class="track-like" data-track-id="trk-012" aria-label="Like track">♡</button>
+    </div>
+  </div>
+</section>
+
+<footer class="player" id="player-bar">
+  <div class="player-now">
+    <div class="player-art" id="player-art"></div>
+    <div class="player-info">
+      <div class="player-title" id="player-title">Select a track</div>
+      <div class="player-artist" id="player-artist">— · —</div>
+    </div>
+  </div>
+  <div class="player-controls">
+    <div class="player-buttons">
+      <button class="player-btn" id="btn-shuffle" aria-label="Shuffle">⇄</button>
+      <button class="player-btn" id="btn-prev" aria-label="Previous">⏮</button>
+      <button class="player-btn player-btn-play" id="btn-play" aria-label="Play">▶</button>
+      <button class="player-btn" id="btn-next" aria-label="Next">⏭</button>
+      <button class="player-btn" id="btn-repeat" aria-label="Repeat">↻</button>
+    </div>
+    <div class="progress-row">
+      <span class="progress-time" id="time-current">0:00</span>
+      <div class="progress-bar" id="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <span class="progress-time" id="time-total">0:00</span>
+    </div>
+  </div>
+  <div class="player-extras">
+    <span id="btn-queue">Queue</span>
+    <span id="btn-volume">Vol · 72</span>
+  </div>
+</footer>
+
+<script>
+  // Minimal interaction layer — designed for easy tracking
+  (function() {
+    const rows = document.querySelectorAll('.track-row');
+    const playerTitle = document.getElementById('player-title');
+    const playerArtist = document.getElementById('player-artist');
+    const playerArt = document.getElementById('player-art');
+    const playBtn = document.getElementById('btn-play');
+    const progressFill = document.getElementById('progress-fill');
+    const timeCurrent = document.getElementById('time-current');
+    const timeTotal = document.getElementById('time-total');
+
+    let currentTrackId = null;
+    let isPlaying = false;
+    let progressInterval = null;
+    let progressSeconds = 0;
+    let trackDurationSeconds = 0;
+
+    function formatTime(s) {
+      const m = Math.floor(s / 60);
+      const sec = Math.floor(s % 60);
+      return m + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
+    function parseDuration(text) {
+      const parts = text.split(':');
+      return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    }
+
+    function selectTrack(row) {
+      rows.forEach(r => r.classList.remove('playing'));
+      row.classList.add('playing');
+
+      const title = row.dataset.trackTitle;
+      const artist = row.dataset.trackArtist;
+      const artClass = row.dataset.art;
+      const duration = row.querySelector('.track-duration').textContent;
+
+      playerTitle.textContent = title;
+      playerArtist.textContent = artist;
+      playerArt.className = 'player-art ' + artClass;
+
+      currentTrackId = row.dataset.trackId;
+      trackDurationSeconds = parseDuration(duration);
+      progressSeconds = 0;
+      timeTotal.textContent = duration;
+      timeCurrent.textContent = '0:00';
+      progressFill.style.width = '0%';
+
+      startPlaying();
+    }
+
+    function startPlaying() {
+      isPlaying = true;
+      playBtn.textContent = '⏸';
+      playBtn.setAttribute('aria-label', 'Pause');
+      if (progressInterval) clearInterval(progressInterval);
+      progressInterval = setInterval(() => {
+        if (progressSeconds < trackDurationSeconds) {
+          progressSeconds += 1;
+          timeCurrent.textContent = formatTime(progressSeconds);
+          progressFill.style.width = (progressSeconds / trackDurationSeconds * 100) + '%';
+        } else {
+          stopPlaying();
+        }
+      }, 1000);
+    }
+
+    function stopPlaying() {
+      isPlaying = false;
+      playBtn.textContent = '▶';
+      playBtn.setAttribute('aria-label', 'Play');
+      if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+      }
+    }
+
+    rows.forEach(row => {
+      row.addEventListener('click', (e) => {
+        if (e.target.classList.contains('track-like')) return;
+        selectTrack(row);
+      });
+    });
+
+    playBtn.addEventListener('click', () => {
+      if (!currentTrackId) return;
+      if (isPlaying) stopPlaying();
+      else startPlaying();
+    });
+
+    document.getElementById('btn-prev').addEventListener('click', () => {
+      if (!currentTrackId) return;
+      const arr = Array.from(rows);
+      const idx = arr.findIndex(r => r.dataset.trackId === currentTrackId);
+      if (idx > 0) selectTrack(arr[idx - 1]);
+    });
+
+    document.getElementById('btn-next').addEventListener('click', () => {
+      if (!currentTrackId) {
+        selectTrack(rows[0]);
+        return;
+      }
+      const arr = Array.from(rows);
+      const idx = arr.findIndex(r => r.dataset.trackId === currentTrackId);
+      if (idx < arr.length - 1) selectTrack(arr[idx + 1]);
+    });
+
+    // Likes
+    document.querySelectorAll('.track-like').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        btn.classList.toggle('liked');
+        btn.textContent = btn.classList.contains('liked') ? '♥' : '♡';
+      });
+    });
+
+    // Progress bar seek
+    document.getElementById('progress-bar').addEventListener('click', (e) => {
+      if (!currentTrackId) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const pct = (e.clientX - rect.left) / rect.width;
+      progressSeconds = Math.floor(pct * trackDurationSeconds);
+      timeCurrent.textContent = formatTime(progressSeconds);
+      progressFill.style.width = (pct * 100) + '%';
+    });
+
+    // Featured cards — clicking plays first track of that "album"
+    document.querySelectorAll('.featured-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const albumId = card.dataset.albumId;
+        // find first track whose art class matches
+        const albumArt = card.querySelector('.featured-art').classList[1];
+        const firstTrack = Array.from(rows).find(r => r.dataset.art === albumArt);
+        if (firstTrack) selectTrack(firstTrack);
+      });
+    });
+
+    // Nav links — visual state only (no real routing)
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>
