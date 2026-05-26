@@ -427,6 +427,159 @@
     letter-spacing: 0.1em;
   }
 
+  /* —— AUTH OVERLAY —— */
+  #auth-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(232, 176, 74, 0.10) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(255, 107, 61, 0.08) 0%, transparent 50%);
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  #auth-overlay.hidden { display: none; }
+
+  .auth-warning {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    background: rgba(232, 176, 74, 0.08);
+    border-bottom: 1px solid rgba(232, 176, 74, 0.25);
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 12px 24px;
+    text-align: center;
+  }
+
+  .auth-panel { width: 100%; max-width: 380px; padding: 48px 40px; text-align: center; }
+  .auth-panel.hidden { display: none; }
+
+  .auth-logo {
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+    font-style: italic;
+    margin-bottom: 48px;
+  }
+  .auth-logo::before {
+    content: "◐";
+    color: var(--accent);
+    margin-right: 8px;
+    font-style: normal;
+  }
+
+  .auth-panel h1 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 48px;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 52px;
+  }
+  .auth-panel h1 em { font-style: italic; font-weight: 600; color: var(--accent); }
+
+  .auth-panel h2 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 34px;
+    letter-spacing: -0.02em;
+    margin-bottom: 36px;
+  }
+
+  .auth-actions { display: flex; flex-direction: column; gap: 12px; }
+
+  .auth-btn-primary {
+    width: 100%;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    padding: 15px 32px;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .auth-btn-primary:hover { background: var(--accent); }
+
+  .auth-btn-secondary {
+    width: 100%;
+    background: transparent;
+    color: var(--ink-dim);
+    border: 1px solid var(--line);
+    padding: 15px 32px;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .auth-btn-secondary:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+  .auth-form { display: flex; flex-direction: column; gap: 12px; margin-bottom: 8px; }
+
+  .auth-input {
+    width: 100%;
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 14px 18px;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .auth-input:focus { border-color: var(--ink-faint); }
+  .auth-input::placeholder { color: var(--ink-faint); }
+
+  .auth-error {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent-hot);
+    text-align: left;
+    letter-spacing: 0.04em;
+    min-height: 16px;
+  }
+  .auth-error.hidden { visibility: hidden; }
+
+  .auth-back {
+    background: none;
+    border: none;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    margin-top: 28px;
+    transition: color 0.2s;
+  }
+  .auth-back:hover { color: var(--ink); }
+
+  .nav-logout {
+    background: none;
+    border: none;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 0;
+  }
+  .nav-logout:hover { color: var(--ink); }
+
   /* —— RESPONSIVE —— */
   @media (max-width: 768px) {
     .nav, .hero, .section { padding-left: 20px; padding-right: 20px; }
@@ -459,6 +612,45 @@
 </head>
 <body>
 
+<div id="auth-overlay">
+  <div class="auth-warning">
+    ⚠ &nbsp; Testing only — credentials are stored in plain text in your browser's local storage. Do not use a real password.
+  </div>
+
+  <div id="auth-landing" class="auth-panel">
+    <div class="auth-logo">Lumen</div>
+    <h1>Late night<br><em>listening.</em></h1>
+    <div class="auth-actions">
+      <button class="auth-btn-primary" id="btn-go-login">Sign in</button>
+      <button class="auth-btn-secondary" id="btn-go-signup">Create account</button>
+    </div>
+  </div>
+
+  <div id="auth-login" class="auth-panel hidden">
+    <div class="auth-logo">Lumen</div>
+    <h2>Sign in</h2>
+    <form id="form-login" class="auth-form">
+      <input class="auth-input" type="text" id="login-username" placeholder="Username" autocomplete="username" />
+      <input class="auth-input" type="password" id="login-password" placeholder="Password" autocomplete="current-password" />
+      <div id="login-error" class="auth-error hidden"></div>
+      <button type="submit" class="auth-btn-primary">Sign in</button>
+    </form>
+    <button class="auth-back" id="btn-back-login">← Back</button>
+  </div>
+
+  <div id="auth-signup" class="auth-panel hidden">
+    <div class="auth-logo">Lumen</div>
+    <h2>Create account</h2>
+    <form id="form-signup" class="auth-form">
+      <input class="auth-input" type="text" id="signup-username" placeholder="Choose a username" autocomplete="username" />
+      <input class="auth-input" type="password" id="signup-password" placeholder="Choose a password" autocomplete="new-password" />
+      <div id="signup-error" class="auth-error hidden"></div>
+      <button type="submit" class="auth-btn-primary">Create account</button>
+    </form>
+    <button class="auth-back" id="btn-back-signup">← Back</button>
+  </div>
+</div>
+
 <nav class="nav" id="main-nav">
   <div class="logo" id="logo">Lumen</div>
   <ul class="nav-links">
@@ -468,8 +660,9 @@
     <li><a href="#" id="nav-search" data-page="search">Search</a></li>
   </ul>
   <div class="nav-user">
-    <span>Member · 03</span>
-    <div class="avatar" id="user-avatar">M</div>
+    <button class="nav-logout" id="btn-logout">Sign out</button>
+    <span id="nav-username">—</span>
+    <div class="avatar" id="user-avatar">?</div>
   </div>
 </nav>
 
@@ -705,6 +898,105 @@
     <span id="btn-volume">Vol · 72</span>
   </div>
 </footer>
+
+<script>
+  (function() {
+    const overlay    = document.getElementById('auth-overlay');
+    const landing    = document.getElementById('auth-landing');
+    const loginPanel = document.getElementById('auth-login');
+    const signupPanel= document.getElementById('auth-signup');
+    const navUsername= document.getElementById('nav-username');
+    const navAvatar  = document.getElementById('user-avatar');
+
+    function getUsers() {
+      try { return JSON.parse(localStorage.getItem('lumen_users') || '{}'); }
+      catch { return {}; }
+    }
+
+    function showPanel(panel) {
+      [landing, loginPanel, signupPanel].forEach(p => p.classList.add('hidden'));
+      panel.classList.remove('hidden');
+    }
+
+    function showApp(username) {
+      overlay.classList.add('hidden');
+      navUsername.textContent = username;
+      navAvatar.textContent = username.charAt(0).toUpperCase();
+      localStorage.setItem('lumen_session', username);
+      if (typeof mixpanel !== 'undefined') {
+        mixpanel.identify(username);
+        mixpanel.people.set({ $name: username });
+      }
+    }
+
+    function signOut() {
+      localStorage.removeItem('lumen_session');
+      showPanel(landing);
+      overlay.classList.remove('hidden');
+      navUsername.textContent = '—';
+      navAvatar.textContent = '?';
+      document.getElementById('login-username').value = '';
+      document.getElementById('login-password').value = '';
+      document.getElementById('signup-username').value = '';
+      document.getElementById('signup-password').value = '';
+    }
+
+    // Resume session if already logged in
+    const session = localStorage.getItem('lumen_session');
+    if (session && getUsers()[session]) showApp(session);
+
+    document.getElementById('btn-go-login').addEventListener('click', () => showPanel(loginPanel));
+    document.getElementById('btn-go-signup').addEventListener('click', () => showPanel(signupPanel));
+    document.getElementById('btn-back-login').addEventListener('click', () => showPanel(landing));
+    document.getElementById('btn-back-signup').addEventListener('click', () => showPanel(landing));
+    document.getElementById('btn-logout').addEventListener('click', signOut);
+
+    document.getElementById('form-login').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorEl  = document.getElementById('login-error');
+      const users    = getUsers();
+
+      if (!users[username]) {
+        errorEl.textContent = 'No account found with that username.';
+        errorEl.classList.remove('hidden'); return;
+      }
+      if (users[username] !== password) {
+        errorEl.textContent = 'Incorrect password.';
+        errorEl.classList.remove('hidden'); return;
+      }
+      errorEl.classList.add('hidden');
+      showApp(username);
+    });
+
+    document.getElementById('form-signup').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('signup-username').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const errorEl  = document.getElementById('signup-error');
+      const users    = getUsers();
+
+      if (username.length < 2) {
+        errorEl.textContent = 'Username must be at least 2 characters.';
+        errorEl.classList.remove('hidden'); return;
+      }
+      if (password.length < 4) {
+        errorEl.textContent = 'Password must be at least 4 characters.';
+        errorEl.classList.remove('hidden'); return;
+      }
+      if (users[username]) {
+        errorEl.textContent = 'That username is already taken.';
+        errorEl.classList.remove('hidden'); return;
+      }
+
+      users[username] = password;
+      localStorage.setItem('lumen_users', JSON.stringify(users));
+      errorEl.classList.add('hidden');
+      showApp(username);
+    });
+  })();
+</script>
 
 <script>
   // Minimal interaction layer — designed for easy tracking
