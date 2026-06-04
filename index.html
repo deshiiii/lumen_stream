@@ -915,6 +915,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       panel.classList.remove('hidden');
     }
 
+    // Identify user in Mixpanel — retries until Mixpanel is loaded
+    function mixpanelIdentify(username) {
+      if (typeof mixpanel !== 'undefined') {
+        mixpanel.identify(username);
+        mixpanel.people.set({ '$name': username });
+      } else {
+        setTimeout(function() { mixpanelIdentify(username); }, 100);
+      }
+    }
+
     function showApp(username, eventName) {
       overlay.classList.add('hidden');
       navUsername.textContent = username;
@@ -927,6 +937,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         event: eventName || 'user_login',
         user_id: username
       });
+
+      // Identify directly in Mixpanel — bypasses GTM timing issues
+      mixpanelIdentify(username);
     }
 
     function signOut() {
@@ -1121,17 +1134,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       if (idx < arr.length - 1) {
         selectTrack(arr[idx + 1]);
 
-        // newly added code - track next button click
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
           event: 'track_skipped_next',
-          user_id: username,
           track_id: arr[idx + 1].dataset.trackId,
           track_title: arr[idx + 1].dataset.trackTitle,
           track_artist: arr[idx + 1].dataset.trackArtist,
           previous_track_id: currentTrackId
         });
-
       }
     });
 
@@ -1158,7 +1168,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     document.querySelectorAll('.featured-card').forEach(card => {
       card.addEventListener('click', () => {
         const albumId = card.dataset.albumId;
-        // find first track whose art class matches
         const albumArt = card.querySelector('.featured-art').classList[1];
         const firstTrack = Array.from(rows).find(r => r.dataset.art === albumArt);
         if (firstTrack) selectTrack(firstTrack);
