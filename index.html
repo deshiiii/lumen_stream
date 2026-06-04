@@ -945,19 +945,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     function signOut() {
       const previousUser = localStorage.getItem('lumen_session');
       localStorage.removeItem('lumen_session');
+
       showPanel(landing);
       overlay.classList.remove('hidden');
       navUsername.textContent = '—';
       navAvatar.textContent = '?';
+
       document.getElementById('login-username').value = '';
       document.getElementById('login-password').value = '';
       document.getElementById('signup-username').value = '';
       document.getElementById('signup-password').value = '';
 
       window.dataLayer = window.dataLayer || [];
+
       window.dataLayer.push({
         event: 'user_logout',
         user_id: previousUser
+      });
+
+      window.dataLayer.push({
+        event: 'mixpanel_reset'
       });
     }
 
