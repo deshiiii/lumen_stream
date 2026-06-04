@@ -1110,7 +1110,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       }
       const arr = Array.from(rows);
       const idx = arr.findIndex(r => r.dataset.trackId === currentTrackId);
-      if (idx < arr.length - 1) selectTrack(arr[idx + 1]);
+      if (idx < arr.length - 1) {
+        selectTrack(arr[idx + 1]);
+
+        // newly added code - track next button click
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'track_skipped_next',
+          user_id: username,
+          track_id: arr[idx + 1].dataset.trackId,
+          track_title: arr[idx + 1].dataset.trackTitle,
+          track_artist: arr[idx + 1].dataset.trackArtist,
+          previous_track_id: currentTrackId
+        });
+
+      }
     });
 
     // Likes
