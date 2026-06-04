@@ -1054,6 +1054,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       timeCurrent.textContent = '0:00';
       progressFill.style.width = '0%';
 
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'track_play',
+        track_id: currentTrackId,
+        track_title: title,
+        track_artist: artist
+      });
+
       startPlaying();
     }
 
