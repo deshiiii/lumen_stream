@@ -298,6 +298,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         mixpanel.identify(username);
         mixpanel.people.set({ '$name': username });
         if (isSignup) mixpanel.track('user_signup', { user_id: username });
+        window._lumenIdentityReady = true;
       } else {
         setTimeout(function() { mixpanelIdentify(username, isSignup); }, 100);
       }
@@ -313,6 +314,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     function signOut() {
       window.lumen && window.lumen.flushStream();
+      window._lumenIdentityReady = false;
       const previousUser = localStorage.getItem('lumen_session');
       localStorage.removeItem('lumen_session');
 
@@ -418,7 +420,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     function pushStreamEvent() {
-      if (!currentTrackId || listenedSeconds === 0) return;
+      if (!currentTrackId || listenedSeconds === 0 || !window._lumenIdentityReady) return;
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
         event: 'stream',
