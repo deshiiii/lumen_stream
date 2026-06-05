@@ -276,7 +276,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </footer>
 
+
 <script>
+// login-page logic - basic dummy
   (function() {
     const overlay    = document.getElementById('auth-overlay');
     const landing    = document.getElementById('auth-landing');
@@ -389,6 +391,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   })();
 </script>
 
+
 <script>
   // Minimal interaction layer — designed for easy tracking
   (function() {
@@ -409,6 +412,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     let progressSeconds = 0;
     let listenedSeconds = 0;
     let trackDurationSeconds = 0;
+
+    function pushLike(track_id) {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'track_like',
+        track_id: track_id
+      });
+    }
 
     function formatTime(s) {
       const m = Math.floor(s / 60);
@@ -488,6 +499,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       }
     }
 
+
     rows.forEach(row => {
       row.addEventListener('click', (e) => {
         if (e.target.classList.contains('track-like')) return;
@@ -524,6 +536,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         e.stopPropagation();
         btn.classList.toggle('liked');
         btn.textContent = btn.classList.contains('liked') ? '♥' : '♡';
+
+        // new code
+        const trackId = e.target.dataset.trackId;
+        pushLike(trackId)
       });
     });
 
