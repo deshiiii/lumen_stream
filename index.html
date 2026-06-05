@@ -293,13 +293,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       panel.classList.remove('hidden');
     }
 
-    // Identify user in Mixpanel — retries until Mixpanel is loaded
-    function mixpanelIdentify(username) {
+    function mixpanelIdentify(username, isSignup) {
       if (typeof mixpanel !== 'undefined') {
         mixpanel.identify(username);
         mixpanel.people.set({ '$name': username });
+        if (isSignup) mixpanel.track('user_signup', { user_id: username });
       } else {
-        setTimeout(function() { mixpanelIdentify(username); }, 100);
+        setTimeout(function() { mixpanelIdentify(username, isSignup); }, 100);
       }
     }
 
@@ -308,16 +308,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       navUsername.textContent = username;
       navAvatar.textContent = username.charAt(0).toUpperCase();
       localStorage.setItem('lumen_session', username);
-
-      // Push to dataLayer so GTM can pick it up
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({
-        event: eventName || 'user_login',
-        user_id: username
-      });
-
-      // Identify directly in Mixpanel — bypasses GTM timing issues
-      mixpanelIdentify(username);
+      mixpanelIdentify(username, eventName === 'user_signup');
     }
 
     function signOut() {
