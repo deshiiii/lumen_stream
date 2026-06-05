@@ -91,44 +91,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </header>
 
-<section class="section" id="featured-section">
-  <div class="section-header">
-    <h2 class="section-title">Featured collections</h2>
-    <span class="section-count">06 / 24</span>
-  </div>
-  <div class="featured" id="featured-grid">
-    <div class="featured-card" data-album-id="alb-001">
-      <div class="featured-art art-1"></div>
-      <div class="featured-title">Vermillion Drift</div>
-      <div class="featured-artist">Halsea Monroe</div>
-    </div>
-    <div class="featured-card" data-album-id="alb-002">
-      <div class="featured-art art-2"></div>
-      <div class="featured-title">Honey on the Tongue</div>
-      <div class="featured-artist">The Provincial</div>
-    </div>
-    <div class="featured-card" data-album-id="alb-003">
-      <div class="featured-art art-3"></div>
-      <div class="featured-title">North of Static</div>
-      <div class="featured-artist">Cordell Vance</div>
-    </div>
-    <div class="featured-card" data-album-id="alb-004">
-      <div class="featured-art art-4"></div>
-      <div class="featured-title">Plum Theater</div>
-      <div class="featured-artist">Yura Saito Trio</div>
-    </div>
-    <div class="featured-card" data-album-id="alb-005">
-      <div class="featured-art art-5"></div>
-      <div class="featured-title">Sycamore Letters</div>
-      <div class="featured-artist">Beech &amp; Crane</div>
-    </div>
-    <div class="featured-card" data-album-id="alb-006">
-      <div class="featured-art art-6"></div>
-      <div class="featured-title">Ember Forecast</div>
-      <div class="featured-artist">Niamh Costello</div>
-    </div>
-  </div>
-</section>
 
 <section class="section" id="tracks-section">
   <div class="section-header">
@@ -585,16 +547,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       progressSeconds = Math.floor(pct * trackDurationSeconds);
       timeCurrent.textContent = formatTime(progressSeconds);
       progressFill.style.width = (pct * 100) + '%';
-    });
-
-    // Featured cards — clicking plays first track of that "album"
-    document.querySelectorAll('.featured-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const albumId = card.dataset.albumId;
-        const albumArt = card.querySelector('.featured-art').classList[1];
-        const firstTrack = Array.from(rows).find(r => r.dataset.art === albumArt);
-        if (firstTrack) selectTrack(firstTrack);
-      });
     });
 
     window.lumen = { flushStream: pushStreamEvent };
