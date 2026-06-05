@@ -308,10 +308,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       navUsername.textContent = username;
       navAvatar.textContent = username.charAt(0).toUpperCase();
       localStorage.setItem('lumen_session', username);
-      if (eventName === 'user_signup') {
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({ event: 'user_signup', user_id: username });
-      }
+
+      // Push to dataLayer so GTM can pick it up
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: eventName || 'user_login',
+        user_id: username
+      });
+
+      // Identify directly in Mixpanel — bypasses GTM timing issues
       mixpanelIdentify(username);
     }
 
@@ -337,9 +342,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         user_id: previousUser
       });
 
-      window.dataLayer.push({
-        event: 'mixpanel_reset'
-      });
+      mixpanel.reset();
     }
 
     // Resume session if already logged in
@@ -378,14 +381,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const errorEl  = document.getElementById('signup-error');
       const users    = getUsers();
 
-      if (username.length < 2) {
-        errorEl.textContent = 'Username must be at least 2 characters.';
-        errorEl.classList.remove('hidden'); return;
-      }
-      if (password.length < 4) {
-        errorEl.textContent = 'Password must be at least 4 characters.';
-        errorEl.classList.remove('hidden'); return;
-      }
       if (users[username]) {
         errorEl.textContent = 'That username is already taken.';
         errorEl.classList.remove('hidden'); return;
