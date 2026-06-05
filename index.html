@@ -308,15 +308,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       navUsername.textContent = username;
       navAvatar.textContent = username.charAt(0).toUpperCase();
       localStorage.setItem('lumen_session', username);
-
-      // Push to dataLayer so GTM can pick it up
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({
-        event: eventName || 'user_login',
-        user_id: username
-      });
-
-      // Identify directly in Mixpanel — bypasses GTM timing issues
+      if (eventName === 'user_signup') {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: 'user_signup', user_id: username });
+      }
       mixpanelIdentify(username);
     }
 
