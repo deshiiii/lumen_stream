@@ -11,7 +11,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lumen — Late Night Listening</title>
+<title>Lumen2 — Late Night Listening</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -297,8 +297,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       if (typeof mixpanel !== 'undefined') {
         mixpanel.identify(username);
         mixpanel.people.set({ '$name': username });
-        if (isSignup) mixpanel.track('user_signup', { user_id: username });
-        window._lumenIdentityReady = true;
+        if (isSignup) {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({ event: 'user_signup', user_id: username });
+        }
       } else {
         setTimeout(function() { mixpanelIdentify(username, isSignup); }, 100);
       }
@@ -314,7 +316,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     function signOut() {
       window.lumen && window.lumen.flushStream();
-      window._lumenIdentityReady = false;
       const previousUser = localStorage.getItem('lumen_session');
       localStorage.removeItem('lumen_session');
 
@@ -329,7 +330,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       document.getElementById('signup-password').value = '';
 
       window.dataLayer = window.dataLayer || [];
-
       window.dataLayer.push({
         event: 'user_logout',
         user_id: previousUser
@@ -420,7 +420,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     function pushStreamEvent() {
-      if (!currentTrackId || listenedSeconds === 0 || !window._lumenIdentityReady) return;
+      if (!currentTrackId || listenedSeconds === 0) return;
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
         event: 'stream',
