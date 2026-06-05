@@ -422,6 +422,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     let isPlaying = false;
     let progressInterval = null;
     let progressSeconds = 0;
+    let listenedSeconds = 0;
     let trackDurationSeconds = 0;
 
     function formatTime(s) {
@@ -436,14 +437,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     function pushStreamEvent() {
-      if (!currentTrackId || progressSeconds === 0) return;
+      if (!currentTrackId || listenedSeconds === 0) return;
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
         event: 'stream',
         track_id: currentTrackId,
         track_title: currentTrackTitle,
         track_artist: currentTrackArtist,
-        stream_seconds: progressSeconds
+        stream_seconds: listenedSeconds
       });
     }
 
@@ -467,6 +468,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       currentTrackArtist = artist;
       trackDurationSeconds = parseDuration(duration);
       progressSeconds = 0;
+      listenedSeconds = 0;
       timeTotal.textContent = duration;
       timeCurrent.textContent = '0:00';
       progressFill.style.width = '0%';
@@ -482,6 +484,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       progressInterval = setInterval(() => {
         if (progressSeconds < trackDurationSeconds) {
           progressSeconds += 1;
+          listenedSeconds += 1;
           timeCurrent.textContent = formatTime(progressSeconds);
           progressFill.style.width = (progressSeconds / trackDurationSeconds * 100) + '%';
         } else {
